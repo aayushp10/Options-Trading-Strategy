@@ -68,5 +68,3 @@ if __name__ == "__main__":
     model = OptionPricing(currentPrice, strikePrice, timeUntilExpiration, riskFreeRate, stockVol, iterations)
     print("Call option price with Monte Carlo simulation in 45 days: ", model.callOptionSimulation())
     print("Put option price with Monte Carlo simulation in 45 days: ", model.putOptionSimulation())
-    
-    "Aayush"
