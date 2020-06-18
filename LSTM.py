@@ -60,7 +60,7 @@ def test(model, data):
 
 
 def getDataSet():
-    df = web.DataReader('SPY', data_source="yahoo", start='2016-04-12', end='2020-07-31')
+    df = web.DataReader('TSLA', data_source="yahoo", start='2016-04-12', end='2020-07-31')
     adj_close = df.filter(['Adj Close'])
     close_dataset = adj_close.values
     scaler = MinMaxScaler(feature_range=(0, 1))
