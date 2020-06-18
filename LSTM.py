@@ -12,7 +12,7 @@ from keras.layers import Dense, LSTM
 import matplotlib.pyplot as plt
 import pickle
 
-plt.style.use('fivethirtyeight');
+plt.style.use('fivethirtyeight')
 
 
 def test(model, data):
@@ -46,19 +46,21 @@ def test(model, data):
     for i in range(0,valid.size):
         valid[i] = predictions[i]
 
+    output = train.tolist()
+    output.extend(valid)
     plt.figure(figsize=(16, 8))
     plt.title('Model')
     plt.xlabel('Date', fontsize='18')
     plt.ylabel('Close price $USD', fontsize='18')
-    plt.plot(train)
-    plt.plot(valid)
+    plt.plot(output, color='orange', label='Predicted Price', lw=2)
+    plt.plot(train, color='blue', label='Original Price', lw=2)
     # plt.plot(valid[[Close',' 'Predictions']])
     plt.legend(['Train', 'Val', 'Predictions'], loc='lower right')
     plt.show()
 
 
 def getDataSet():
-    df = web.DataReader('SPY', data_source="yahoo", start='2020-04-12', end='2020-07-01')
+    df = web.DataReader('SPY', data_source="yahoo", start='2016-04-12', end='2020-07-31')
     adj_close = df.filter(['Adj Close'])
     close_dataset = adj_close.values
     scaler = MinMaxScaler(feature_range=(0, 1))
@@ -106,7 +108,7 @@ except FileNotFoundError:
 
     model.compile(optimizer='adam', loss='mean_squared_error')
 
-    model.fit(x_train, y_train, batch_size=1, epochs=1)
+    model.fit(x_train, y_train, batch_size=1, epochs=10)
     model_name = '2020-06-16'
     pickle.dump(model, open(model_name, 'wb'))
     test(model, data)

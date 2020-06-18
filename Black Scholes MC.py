@@ -57,8 +57,8 @@ class OptionPricing:
 
 if __name__ == "__main__":
 
-    currentPrice = 304.34
-    strikePrice = 280
+    currentPrice = 317.32
+    strikePrice = 322
     daysUntilExpiration = 45
     timeUntilExpiration = daysUntilExpiration/365
     riskFreeRate = 0.30

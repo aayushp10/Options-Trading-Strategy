@@ -9,8 +9,8 @@ import datetime as dt
 ticker = input('Enter the ticker of the stock\n').upper()
 probProfit = float(input("What probability of profit are you looking for:\n"))
 input_filepath = "/Users/mraay/Desktop/yahoo-downloaded-data/"
-start_date = dt.datetime(2018, 1, 1)
-end_date = dt.datetime(2020, 6, 10)
+start_date = dt.datetime(2020, 4, 12)
+end_date = dt.datetime(2020, 6, 16)
 stockPrice = web.DataReader(f'{ticker}', 'yahoo', start_date, end_date)['Adj Close']
 
 stockReturns = stockPrice.pct_change()
