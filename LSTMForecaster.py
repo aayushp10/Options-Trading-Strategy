@@ -81,8 +81,8 @@ def getDataSet():
     X_lately = X[-forecast_out:]
 
     df.dropna(inplace=True)
-
     y = np.array(df['forecast'])
+
     X_train = df[:-forecast_out, :]
     X_test = df[-forecast_out:, :]
 
