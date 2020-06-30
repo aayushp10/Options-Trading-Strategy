@@ -2,7 +2,7 @@ import math
 import numpy as np
 import datetime as dt
 from numpy import newaxis
-from keras.layers import Dense, Activation, Dropout, LSTM
+from keras.layers import Dense, Activation, Dropout, LSTM, Flatten
 from keras.models import Sequential, load_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.metrics import mean_squared_error
@@ -28,18 +28,21 @@ class LSTMModel():
             input_dim = layer['input_dim'] if 'input_dim' in layer else None
 
 
+            if layer['type'] == 'flatten':
+                self.model.add(Flatten())
             if layer['type'] == 'dense':
                 self.model.add(Dense(neurons, activation = activation))
             if layer['type'] == 'lstm':
-                self.model.add(LSTM(neurons, input_shape=(input_timesteps, input_dim), return_sequences=return_seq ))
+                self.model.add(LSTM(neurons, input_shape=(input_timesteps, input_dim), return_sequences=return_seq))
             if layer['type'] == 'dropout':
                 self.model.add(Dropout(dropout_rate))
 
 
-            self.model.compile(loss=self.configs['model']['loss'], optimizer=self.configs['model']['optimizer'])
+        self.model.compile(loss=self.configs['model']['loss'], optimizer=self.configs['model']['optimizer'])
 
 
     def train(self, x, y):
+
         epochs = self.configs['training']['epochs']
         batch_size = self.configs['training']['batch_size']
         callbacks = [EarlyStopping(monitor='val_loss', patience=2)]

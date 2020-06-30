@@ -14,12 +14,10 @@ data.prepareData()
 model = LSTMModel(ticker, configs)
 model.build_model()
 
-data.x_train_scaled = np.reshape(data.x_train_scaled, (data.x_train_scaled.shape[0], 1, data.x_train_scaled.shape[1]))
-
-data.y_test_scaled = np.reshape(data.y_test_scaled, (data.y_test_scaled.shape[0], 1, data.y_test_scaled.shape[1]))
-
+# data.x_train_scaled = np.reshape(data.x_train_scaled, (data.x_train_scaled.shape[0], data.x_train_scaled.shape[1] * data.x_train_scaled.shape[2]))
+data.y_test_scaled = np.reshape(data.y_test_scaled, (data.y_test_scaled.shape[0], data.y_test_scaled.shape[1] * data.y_test_scaled.shape[2]))
 
 model.train(data.x_train_scaled, data.y_train_scaled)
 model.test(data, 30)
-
-
+#
+#
