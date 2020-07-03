@@ -18,7 +18,8 @@ test_size = len(df1)-training_size
 train_data, test_data = df1[0:training_size, :], df1[training_size:len(df1), :1]
 
 def create_dataset(dataset, time_step=1):
-    dataX, dataY = [], []
+    dataX = []
+    dataY = []
     for i in range(len(dataset)-time_step-1):
         a = dataset[i: (i+time_step), 0]
         dataX.append(a)
@@ -28,7 +29,6 @@ def create_dataset(dataset, time_step=1):
 time_step = 100
 X_train, y_train = create_dataset(train_data, time_step)
 X_test, y_test = create_dataset(test_data, time_step)
-
 
 
 X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], 1)
@@ -67,23 +67,33 @@ testPredictPlot[:, :] = np.nan
 testPredictPlot[len(train_predict)+(look_back*2)+1:len(df1)-1, :] = test_predict
 
 #plt.plot(scaler.inverse_transform(df1), color='blue')
-#plt.plot(trainPredictPlot, color='orange')
-#plt.plot(testPredictPlot, color='green')
-#plt.show()
+# plt.plot(trainPredictPlot, color='orange')
+# plt.plot(testPredictPlot, color='green')
+# plt.show()
 
-days_out = 32
-
+days_out = 100
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
 prediction_seqs = []
-for i in range(int(len(X_test[:, :-1])/days_out)):
-    curr_frame = (X_test[:, :-1])[(i+1)*days_out]
+for i in range(int(X_train.shape[0]/days_out)):
+
+    curr_frame = (X_train[:, :])[(i)*days_out]
+    print('current frame \n')
+    print(curr_frame)
+
     predicted = []
     for j in range(days_out):
-        a = model.predict(curr_frame[newaxis,:, :])
+
+        a = model.predict(curr_frame[newaxis,:, :], verbose=1)
         a = a[0,0]
         predicted.append(a)
         curr_frame = curr_frame[1:]
         curr_frame = np.insert(curr_frame, [look_back-2], predicted[-1], axis=0)
+
     prediction_seqs.append(predicted)
+print(len(prediction_seqs))
 
 
 x_input = test_data[len(test_data)-look_back:].reshape(1,-1)
@@ -92,17 +102,16 @@ x_input = test_data[len(test_data)-look_back:].reshape(1,-1)
 temp_input = list(x_input)
 temp_input = temp_input[0].tolist()
 
-
 lst_output = []
 n_steps = look_back
-days_out = 32
+
 i = 0
 while (i<days_out):
     if (len(temp_input)>n_steps):
         x_input=np.array(temp_input[1:])
         x_input=x_input.reshape(1, -1)
         x_input = x_input.reshape((1, n_steps, 1))
-        yhat = model.predict(x_input, verbose = 0)
+        yhat = model.predict(x_input, verbose = 1)
         temp_input.extend(yhat[0].tolist())
         temp_input = temp_input[1:]
         lst_output.extend(yhat.tolist())
@@ -110,7 +119,7 @@ while (i<days_out):
 
     else:
         x_input = x_input.reshape((1, n_steps, 1))
-        yhat = model.predict(x_input, verbose=0)
+        yhat = model.predict(x_input, verbose=1)
         temp_input.extend(yhat[0].tolist())
         lst_output.extend(yhat.tolist())
         i = i+1
@@ -125,11 +134,14 @@ fig = plt.figure(facecolor='white')
 ax = fig.add_subplot(111)
 ax.plot(df3, label='True Data')
 # Pad the list of predictions to shift it in the graph to it's correct start
-
 for i, data in enumerate(prediction_seqs):
-    data = scaler.inverse_transform(data)
+    print('yo')
+    prediction_seqs[i] = scaler.inverse_transform(np.array(data).reshape((-1,1)))
+for i, data in enumerate(prediction_seqs):
     padding = [None for p in range(i * days_out)]
-    plt.plot(padding + data, label='Prediction')
+    padding = np.array(padding).reshape((-1,1))
+    pltData = np.concatenate((padding, data))
+    plt.plot(pltData, label='Prediction')
     plt.legend()
 plt.show()
 #plt.plot(df3, color = 'orange')
